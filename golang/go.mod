@@ -1,4 +1,4 @@
-module webapi/passwordx/golang
+module github.com/passwordx/v0.1/golang
 
 go 1.16
 
