@@ -1,4 +1,4 @@
-module github.com/herebythere/passwordx/v0.1/golang/
+module github.com/herebythere/passwordx/v0.1/golang
 
 go 1.16
 
