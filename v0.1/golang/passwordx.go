@@ -33,6 +33,8 @@ var (
 		SaltLength:   16,
 		KeyLength:    32,
 	}
+
+	errNilHashResults = errors.New("nil hash results given")
 )
 
 func generateSaltRandomBytes(n uint32) (*[]byte, error) {
@@ -73,7 +75,7 @@ func HashPassword(password string, p *HashParams) (*HashResults, error) {
 
 func PasswordIsValid(givenPassword string, comparator *HashResults) (bool, error) {
 	if comparator == nil {
-		return false, errors.New("nil hash results given")
+		return false, errNilHashResults
 	}
 
 	salt, errSalt := base64.RawStdEncoding.DecodeString(comparator.Salt)
