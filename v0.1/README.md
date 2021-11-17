@@ -9,11 +9,11 @@ Utility functions to hash and salt passwords with argon2 encryption.
 ```
 HashParams {
   hash_function string
-  memory       uint32
-  time         uint32
-  threads      uint8
-  salt_length  uint32
-  salt_length  uint32
+  memory        uint32
+  time          uint32
+  threads       uint8
+  salt_length   uint32
+  salt_length   uint32
 }
 ```
 
