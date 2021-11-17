@@ -1,4 +1,4 @@
-package passwordx
+package passwords
 
 import (
 	"crypto/rand"
@@ -12,8 +12,8 @@ import (
 type HashParams struct {
 	HashFunction string `json:"hash_function"`
 	Memory       uint32 `json:"memory"`
-	Iterations   uint32 `json:"iterations"`
-	Parallelism  uint8  `json:"paralleslism"`
+	Time         uint32 `json:"time"`
+	Threads      uint8  `json:"threads"`
 	SaltLength   uint32 `json:"salt_length"`
 	KeyLength    uint32 `json:"key_length"`
 }
@@ -26,11 +26,11 @@ type HashResults struct {
 
 var (
 	DefaultHashParams = HashParams{
-		HashFunction: "argon2id",
-		Memory:       64 * 1024,
-		Iterations:   2,
-		Parallelism:  8,
-		SaltLength:   16,
+		HashFunction: "argon2",
+		Memory:       32 * 1024,
+		Time:         3,
+		Threads:      4,
+		SaltLength:   32,
 		KeyLength:    32,
 	}
 
@@ -56,9 +56,9 @@ func HashPassword(password string, p *HashParams) (*HashResults, error) {
 	hash := argon2.IDKey(
 		[]byte(password),
 		*salt,
-		p.Iterations,
+		p.Time,
 		p.Memory,
-		p.Parallelism,
+		p.Threads,
 		p.KeyLength,
 	)
 	saltBase64 := base64.RawStdEncoding.EncodeToString(*salt)
@@ -73,7 +73,7 @@ func HashPassword(password string, p *HashParams) (*HashResults, error) {
 	return &encodedHash, nil
 }
 
-func PasswordIsValid(givenPassword string, comparator *HashResults) (bool, error) {
+func VerifyPassword(givenPassword string, comparator *HashResults) (bool, error) {
 	if comparator == nil {
 		return false, errNilHashResults
 	}
@@ -91,9 +91,9 @@ func PasswordIsValid(givenPassword string, comparator *HashResults) (bool, error
 	contrastHash := argon2.IDKey(
 		[]byte(givenPassword),
 		salt,
-		comparator.Params.Iterations,
+		comparator.Params.Time,
 		comparator.Params.Memory,
-		comparator.Params.Parallelism,
+		comparator.Params.Threads,
 		comparator.Params.KeyLength,
 	)
 

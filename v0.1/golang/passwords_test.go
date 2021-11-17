@@ -1,4 +1,4 @@
-package passwordx
+package passwords
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ type HashPasswordTestPlan []struct {
 	Password string
 }
 
-type PasswordIsValidFailsTestPlan []struct {
+type VerifyPasswordFailsTestPlan []struct {
 	Password          string
 	IncorrectPassword string
 }
@@ -22,7 +22,7 @@ var HashPasswordPlan = HashPasswordTestPlan{
 	{"hello, world"},
 }
 
-var PasswordFailsPlan = PasswordIsValidFailsTestPlan{
+var PasswordFailsPlan = VerifyPasswordFailsTestPlan{
 	{"", "hello, world"},
 	{"admin", "1234567890"},
 	{"password", "drowssap"},
@@ -31,11 +31,11 @@ var PasswordFailsPlan = PasswordIsValidFailsTestPlan{
 }
 
 var HashParamsDoubleCheck = HashParams{
-	HashFunction: "argon2id",
-	Memory:       64 * 1024,
-	Iterations:   2,
-	Parallelism:  8,
-	SaltLength:   16,
+	HashFunction: "argon2",
+	Memory:       32 * 1024,
+	Time:         3,
+	Threads:      4,
+	SaltLength:   32,
 	KeyLength:    32,
 }
 
@@ -45,8 +45,6 @@ func TestDefaultHashParams(t *testing.T) {
 	}
 }
 
-// Make sure Salt and Hash are not equal to a given password
-// This is the point of hashing a password
 func TestHashPassword(t *testing.T) {
 	for index, test := range HashPasswordPlan {
 		hashedPassword, err := HashPassword(test.Password, &DefaultHashParams)
@@ -67,7 +65,7 @@ func TestHashPassword(t *testing.T) {
 	}
 }
 
-func TestPasswordIsValid(t *testing.T) {
+func TestVerifyPassword(t *testing.T) {
 	for index, test := range HashPasswordPlan {
 		hashedPasswordResults, hashedPasswordErr := HashPassword(
 			test.Password,
@@ -84,7 +82,7 @@ func TestPasswordIsValid(t *testing.T) {
 			continue
 		}
 
-		passwordIsValid, passwordCheckErr := PasswordIsValid(
+		passwordIsValid, passwordCheckErr := VerifyPassword(
 			test.Password,
 			hashedPasswordResults,
 		)
@@ -112,7 +110,7 @@ func TestPasswordIsValid(t *testing.T) {
 	}
 }
 
-func TestPasswordIsValidFails(t *testing.T) {
+func TestVerifyPasswordFails(t *testing.T) {
 	for index, test := range PasswordFailsPlan {
 		hashedPasswordResults, hashedPasswordErr := HashPassword(
 			test.Password,
@@ -129,7 +127,7 @@ func TestPasswordIsValidFails(t *testing.T) {
 			continue
 		}
 
-		passwordIsValid, passwordCheckErr := PasswordIsValid(
+		passwordIsValid, passwordCheckErr := VerifyPassword(
 			test.IncorrectPassword,
 			hashedPasswordResults,
 		)
