@@ -5,7 +5,7 @@ use rand_core::OsRng;
 #[test]
 fn verifiy_password_default() {
     let salt = SaltString::generate(&mut OsRng);
-    let hash = match create_password_argon2(salt, &"bad_password_1", &None) {
+    let hash = match create_password_argon2(&"bad_password_1", salt, &None) {
         Ok(h) => h,
         Err(e) => return assert!(false),
     };

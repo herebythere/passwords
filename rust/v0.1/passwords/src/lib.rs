@@ -5,8 +5,8 @@ use argon2::{Argon2, Params};
 use argon2::password_hash::{Error, PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 
 pub fn create_password_argon2<'a>(
-    salt: SaltString,
     password: &str,
+    salt: SaltString,
     params: &Option<Params>,
 ) -> Result<String, Error> {
     let password_bytes = password.as_bytes();
